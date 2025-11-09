@@ -49,7 +49,7 @@ val syncUnmodifiableTask = tasks.register<GenerateSrcTask>("sync-unmodifiable") 
         }
 
         forEachTypes { type ->
-            for (suffix in arrayOf("BigList", "List", "Set")) {
+            for (suffix in arrayOf("BigList", "List", "Set", "Collection")) {
                 val rawType = type.typeName + suffix
                 if (type.isGeneric) {
                     appendLine("inline fun <T> ${rawType}<T>.synchronized(): ${rawType}<T> = ${rawType}s.synchronize(this)")
