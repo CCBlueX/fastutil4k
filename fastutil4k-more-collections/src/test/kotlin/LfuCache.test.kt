@@ -203,7 +203,7 @@ class LfuCacheTest {
 
         cacheWithCallback["a"] = 1
         cacheWithCallback["b"] = 2
-        cacheWithCallback["c"] = 3  // should trigger discard
+        cacheWithCallback["c"] = 3 // should trigger discard
 
         // One item should be discarded
         assertEquals(1, discarded.size)
@@ -231,5 +231,4 @@ class LfuCacheTest {
         assertEquals(oldSize, cache.size)
         assertEquals(99, cache["a"])
     }
-
 }

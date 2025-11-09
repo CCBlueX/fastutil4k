@@ -1,4 +1,5 @@
 @file:Suppress("NOTHING_TO_INLINE")
+
 package net.ccbluex.fastutil
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap
@@ -171,5 +172,4 @@ class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
 
     override val values: ObjectCollection<V>
         get() = _values ?: cache.values.unmodifiable().also { _values = it }
-
 }
