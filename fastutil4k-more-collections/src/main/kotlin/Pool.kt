@@ -85,7 +85,7 @@ sealed interface Pool<E : Any> {
         @JvmName("create")
         operator fun <E : Any> invoke(
             initializer: Supplier<E>,
-            finalizer: Consumer<E>,
+            finalizer: Consumer<in E>,
         ): Pool<E> = ListBasedPool(initializer, finalizer)
 
         /**
@@ -139,14 +139,14 @@ sealed interface Pool<E : Any> {
      */
     private class ListBasedPool<E : Any>(
         private val initializer: Supplier<E>,
-        private val finalizer: Consumer<E>,
+        private val finalizer: Consumer<in E>,
     ) : Pool<E> {
         // Internal storage for pooled objects
         private val stack = ReferenceArrayList<E>()
 
         private val batchBorrowBuffer = ReferenceArrayList<E>()
 
-        override fun borrow(): E = if (stack.isEmpty) initializer.get() else stack.removeAt(stack.size - 1)
+        override fun borrow(): E = if (stack.isEmpty) initializer.get() else stack.pop()
 
         override fun borrowInto(
             destination: MutableCollection<E>,

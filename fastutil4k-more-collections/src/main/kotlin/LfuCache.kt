@@ -18,7 +18,7 @@ import java.util.function.IntFunction
 class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
     @get:JvmName("capacity")
     val capacity: Int,
-    val onDiscard: BiConsumer<K, V> = BiConsumer { _, _ -> },
+    val onDiscard: BiConsumer<in K, in V> = NOOP,
 ) : Map<K, V> {
     init {
         require(capacity > 0) { "capacity should be positive" }
@@ -85,6 +85,7 @@ class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
 
     /**
      * Discards one of the least-used keys.
+     * If multiple keys have same use count, discard by LRU strategy.
      */
     private fun discard() {
         if (countTable.isEmpty()) return
@@ -149,11 +150,19 @@ class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
     inline fun getOrPut(key: K, mappingFunction: (K) -> V): V = get(key) ?: mappingFunction(key).also { put(key, it) }
 
     /**
-     * Clears the cache.
+     * Clears the cache and call [onDiscard] for all cached entries.
      */
     fun clear() {
+        if (onDiscard !== NOOP) {
+            cache.fastIterator().forEach { (k, v) -> onDiscard.accept(k, v) }
+        }
         cache.clear()
         counts.clear()
+        setPool.ensureCapacity(setPool.size + countTable.size)
+        countTable.fastIterator().forEach { (_, v) ->
+            v.clear()
+            setPool += v
+        }
         countTable.clear()
         minCount = 0
     }
@@ -172,4 +181,9 @@ class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
 
     override val values: ObjectCollection<V>
         get() = _values ?: cache.values.unmodifiable().also { _values = it }
+
+    internal companion object {
+        @JvmStatic
+        private val NOOP = BiConsumer<Any?, Any?> { _, _ -> }
+    }
 }
