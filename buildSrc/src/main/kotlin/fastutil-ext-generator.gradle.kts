@@ -431,16 +431,30 @@ val collectionMapToTypedArrayTask = tasks.register<GenerateSrcTask>("collection-
     imports.addAll(IMPORT_ALL)
 
     content {
+        val iteratorName = "i"
+
         // Collection map to object array
-        appendLine("inline fun <T, reified R> Collection<T>.mapToArray(transform: (T) -> R): Array<R> = iterator().run { Array(size) { transform(next()) } }")
+        appendLine("inline fun <T, reified R> Collection<T>.mapToArray(transform: (T) -> R): Array<R> {")
+        appendLine("    val $iteratorName = iterator()")
+        appendLine("    return Array(size) { transform($iteratorName.next()) }")
+        appendLine("}")
         forEachPrimitiveTypes { type ->
-            appendLine("inline fun <reified R> ${type}Collection.mapToArray(transform: (${type}) -> R): Array<R> = iterator().run { Array(size) { transform(next${type}()) } }")
+            appendLine("inline fun <reified R> ${type}Collection.mapToArray(transform: (${type}) -> R): Array<R> {")
+            appendLine("    val $iteratorName = iterator()")
+            appendLine("    return Array(size) { transform($iteratorName.next${type}()) }")
+            appendLine("}")
         }
         // Collection map to primitive array
         forEachPrimitiveTypes { result ->
-            appendLine("inline fun <T> Collection<T>.mapTo${result}Array(transform: (T) -> ${result}): ${result}Array = iterator().run { ${result}Array(size) { transform(next()) } }")
+            appendLine("inline fun <T> Collection<T>.mapTo${result}Array(transform: (T) -> ${result}): ${result}Array {")
+            appendLine("    val $iteratorName = iterator()")
+            appendLine("    return ${result}Array(size) { transform($iteratorName.next()) }")
+            appendLine("}")
             forEachPrimitiveTypes { receiver ->
-                appendLine("inline fun ${receiver}Collection.mapTo${result}Array(transform: (${receiver}) -> ${result}): ${result}Array = iterator().run { ${result}Array(size) { transform(next${receiver}()) } }")
+                appendLine("inline fun ${receiver}Collection.mapTo${result}Array(transform: (${receiver}) -> ${result}): ${result}Array {")
+                appendLine("    val $iteratorName = iterator()")
+                appendLine("    return ${result}Array(size) { transform($iteratorName.next${receiver}()) }")
+                appendLine("}")
             }
         }
     }
@@ -469,8 +483,8 @@ val typedIterableForEachTask = tasks.register<GenerateSrcTask>("typed-iterable-f
 
             // Iterable forEachIndexed
             appendLine("inline fun ${type}Iterable.forEach${type}Indexed(action: (index: Int, ${type}) -> Unit) {")
-            appendLine("    var index = 0")
-            appendLine("    iterator().forEach { action(index++, it) }")
+            appendLine("    var i = 0")
+            appendLine("    iterator().forEach { action(i++, it) }")
             appendLine("}")
         }
     }
