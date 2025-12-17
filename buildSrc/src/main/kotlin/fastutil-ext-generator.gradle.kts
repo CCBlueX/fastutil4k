@@ -279,7 +279,7 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
         forEachPrimitiveTypes { type ->
             for ((prefix, fullType) in prefixToFullType) {
                 val setType = "${prefix}Set"
-                if (type != FastutilType.BOOLEAN || (prefix == "Array" || prefix == "Hash")) {
+                if (type != FastutilType.BOOLEAN && (prefix == "RBTree" || prefix == "AVLTree") || (prefix == "Array" || prefix == "Hash")) {
                     appendLine("inline fun ${type.lowercaseName}${setType}Of(): ${type}${fullType} = ${type}${fullType}()")
                     when (prefix) {
                         "Array", "RBTree", "AVLTree" -> appendLine("inline fun ${type.lowercaseName}${setType}Of(vararg elements: ${type}): ${type}${fullType} = ${type}${fullType}(elements)")
