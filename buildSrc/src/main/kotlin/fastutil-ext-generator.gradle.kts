@@ -638,7 +638,8 @@ val enumSetTask = tasks.register<GenerateSrcTask>("enum-set") {
         appendLine()
 
         for (it in arrayOf("Array", "Sequence", "Iterable", "Stream")) {
-            appendLine("inline fun $generic $it<E>.toEnumSet(): EnumSet<E> {")
+            val generic1 = if (it == "Array") "<out E>" else "<E>"
+            appendLine("inline fun $generic $it$generic1.toEnumSet(): EnumSet<E> {")
             withIndent {
                 toEnumSet("this")
             }
