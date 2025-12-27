@@ -34,6 +34,10 @@ inline fun <reified T> Stream<*>.forEachIsInstance(action: (T) -> Unit) {
     }
 }
 
+inline fun <reified T, E> Array<E>.onEachIsInstance(action: (T) -> Unit) = apply {
+    forEachIsInstance(action)
+}
+
 inline fun <reified T, C : Iterable<*>> C.onEachIsInstance(action: (T) -> Unit) = apply {
     forEachIsInstance(action)
 }
