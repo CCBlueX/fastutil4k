@@ -531,24 +531,24 @@ val enumSetTask = tasks.register<GenerateSrcTask>("enum-set") {
 
         for (i in 1..PARAM_ENUMERATION_COUNT) {
             appendLine("inline fun $generic enumSetOf(")
-            repeat(i) {
-                indent()
-                appendLine("e$it: E,")
+            withIndent {
+                repeat(i) {
+                    appendLine("e$it: E,")
+                }
             }
             appendLine("): EnumSet<E> {")
-            indent()
-            appendLine("val set = EnumSet.noneOf(E::class.java)")
-            repeat(i) {
-                indent()
-                appendLine("set.add(e$it)")
+            withIndent {
+                appendLine("val set = EnumSet.noneOf(E::class.java)")
+                repeat(i) {
+                    appendLine("set.add(e$it)")
+                }
             }
-            indent()
             appendLine("return set")
             appendLine("}")
             appendLine()
         }
 
-        fun LineAppendable.toEnumSet(iterateOn: String) {
+        fun StringAppendable.toEnumSet(iterateOn: String) {
             appendLine("val set = EnumSet.noneOf(E::class.java)")
             appendLine("for (e in $iterateOn) set.add(e)")
             appendLine("return set")
@@ -585,8 +585,6 @@ val enumMapTask = tasks.register<GenerateSrcTask>("enum-map") {
         appendLine()
 
         appendLine("inline fun $generic enumMapOf(mapping: (K) -> V): EnumMap<K, V> {")
-
-        appendLine("inline fun $generic enumMapOf(mapping: (K) -> V): EnumMap<K, V> {")
         withIndent {
             appendLine("val map = EnumMap<K, V>(K::class.java)")
             appendLine("for (k in K::class.java.enumConstants) {")
@@ -601,18 +599,18 @@ val enumMapTask = tasks.register<GenerateSrcTask>("enum-map") {
 
         for (i in 1..PARAM_ENUMERATION_COUNT) {
             appendLine("inline fun $generic enumMapOf(")
-            repeat(i) {
-                indent()
-                appendLine("k$it: K, v$it: V,")
+            withIndent {
+                repeat(i) {
+                    appendLine("k$it: K, v$it: V,")
+                }
             }
             appendLine("): EnumMap<K, V> {")
-            indent()
-            appendLine("val map = EnumMap<K, V>(K::class.java)")
-            repeat(i) {
-                indent()
-                appendLine("map.put(k$it, v$it)")
+            withIndent {
+                appendLine("val map = EnumMap<K, V>(K::class.java)")
+                repeat(i) {
+                    appendLine("map.put(k$it, v$it)")
+                }
             }
-            indent()
             appendLine("return map")
             appendLine("}")
             appendLine()
