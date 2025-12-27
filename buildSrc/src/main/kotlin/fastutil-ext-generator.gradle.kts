@@ -11,6 +11,7 @@ val generateAllTask = tasks.register("generate-all") {
         immutableListSetFactoryTask,
         mutableListFactoryTask,
         mutableSetFactoryTask,
+        mutableMapFactoryTask,
         mapFastIterableIteratorTask,
         arrayMapToTypedArrayTask,
         collectionMapToTypedArrayTask,
@@ -345,6 +346,81 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
                 else -> {
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(element: T): ${type}${fullType}<T> = ${type}${fullType}.of(element)")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * intLongArrayMapOf
+ * intObjectHashMapOf
+ * longBooleanLinkedMapOf
+ */
+val mutableMapFactoryTask = tasks.register<GenerateSrcTask>("mutable-map-factory") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+    imports.addAll(IMPORT_ALL)
+//    imports.add("it.unimi.dsi.fastutil.Hash")
+
+    content {
+        val prefixToFullType = mapOf(
+            "Array" to "ArrayMap",
+            "Hash" to "OpenHashMap",
+            "Linked" to "LinkedOpenHashMap",
+//            "RBTree" to "RBTreeMap", TODO: sorted map, custom map...
+//            "AVLTree" to "AVLTreeMap",
+        )
+
+        forEachMapTypes { left, right ->
+            val genericType = when {
+                left.isGeneric && right.isGeneric -> "<K, V>"
+                left.isGeneric -> "<K>"
+                right.isGeneric -> "<V>"
+                else -> null
+            }
+
+            val keyType = if (left.isGeneric) "K" else left.typeName
+            val valueType = if (right.isGeneric) "V" else right.typeName
+
+            for ((prefix, mapType) in prefixToFullType) {
+                for (i in 0..PARAM_ENUMERATION_COUNT) {
+                    append("inline fun ")
+                    if (genericType != null) {
+                        append(genericType)
+                        space()
+                    }
+                    // function name
+                    val functionName = left.lowercaseName + right.typeName + prefix + "MapOf"
+                    val mapTypeName = left.typeName + "2" + right.typeName + mapType
+                    val mapTypeNameWithGeneric = if (genericType != null) mapTypeName + genericType else mapTypeName
+                    append(functionName)
+                    appendLine("(")
+                    withIndent {
+                        repeat(i) {
+                            appendLine("k$it: $keyType, v$it: $valueType,")
+                        }
+                    }
+                    appendLine("): $mapTypeNameWithGeneric {")
+
+                    withIndent {
+                        if (i == 0) {
+                            appendLine("val map = $mapTypeNameWithGeneric()")
+                        } else {
+                            appendLine("val map = $mapTypeNameWithGeneric($i)")
+                        }
+
+                        repeat(i) {
+                            appendLine("map.put(k$it, v$it)")
+                        }
+
+                        appendLine("return map")
+                    }
+
+                    appendLine("}")
+                    appendLine()
                 }
             }
         }
