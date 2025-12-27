@@ -23,8 +23,22 @@ internal inline fun forEachMapTypes(block: (left: FastutilType, right: FastutilT
 
 val Project.fastutilGeneratorOutput get() = layout.buildDirectory.dir("generated/fastutil-kt")
 
+private const val INDENT_SIZE = 4
+
 fun interface LineAppendable {
-    fun appendLine(line: String)
+    fun append(string: String)
+
+    fun appendLine(line: String) {
+        append(line)
+        append("\n")
+    }
 
     fun appendLine() = appendLine("")
+
+    fun indent(n: Int = 1) = append(" ".repeat(n * INDENT_SIZE))
 }
+
+inline fun LineAppendable.withIndent(n: Int = 1, action: LineAppendable.() -> Unit) = LineAppendable {
+    indent(n)
+    append(it)
+}.apply(action)

@@ -16,6 +16,7 @@ val generateAllTask = tasks.register("generate-all") {
         collectionMapToTypedArrayTask,
         typedIterableForEachTask,
         arrayAndListSwapTask,
+        enumSetTask,
     )
 }
 
@@ -511,6 +512,61 @@ val arrayAndListSwapTask = tasks.register<GenerateSrcTask>("array-and-list-swap"
         appendLine("inline fun <T> MutableList<T>.swap(i: Int, j: Int) { val t = this[j]; this[j] = this[i]; this[i] = t }")
         forEachPrimitiveTypes { type ->
             appendLine("inline fun ${type}List.swap(i: Int, j: Int) { val t = this.get${type}(j); this.set(j, this.get${type}(i)); this.set(i, t) }")
+        }
+    }
+}
+
+val enumSetTask = tasks.register<GenerateSrcTask>("enum-set") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+    imports.add("java.util.EnumSet")
+    imports.add("java.util.stream.Stream")
+
+    content {
+        val generic = "<reified E : Enum<E>>"
+
+        appendLine("inline fun $generic enumSetOf(): EnumSet<E> = EnumSet.noneOf(E::class.java)")
+
+        for (i in 1..PARAM_ENUMERATION_COUNT) {
+            appendLine("inline fun $generic enumSetOf(")
+            repeat(i) {
+                indent()
+                appendLine("e$it: E,")
+            }
+            appendLine("): EnumSet<E> {")
+            indent()
+            appendLine("val set = EnumSet.noneOf(E::class.java)")
+            repeat(i) {
+                indent()
+                appendLine("set.add(e$it)")
+            }
+            indent()
+            appendLine("return set")
+            appendLine("}")
+            appendLine()
+        }
+
+        fun LineAppendable.toEnumSet(iterateOn: String) {
+            appendLine("val set = EnumSet.noneOf(E::class.java)")
+            appendLine("for (e in $iterateOn) set.add(e)")
+            appendLine("return set")
+        }
+
+        appendLine("inline fun $generic enumSetOf(vararg elements: E): EnumSet<E> {")
+        withIndent {
+            toEnumSet("elements")
+        }
+        appendLine("}")
+        appendLine()
+
+        for (it in arrayOf("Array", "Sequence", "Iterable", "Stream")) {
+            appendLine("inline fun $generic $it<E>.toEnumSet(): EnumSet<E> {")
+            withIndent {
+                toEnumSet("this")
+            }
+            appendLine("}")
+            appendLine()
         }
     }
 }

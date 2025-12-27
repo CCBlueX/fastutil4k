@@ -15,3 +15,5 @@ internal val IMPORT_ALL =
         "it.unimi.dsi.fastutil.objects.*",
         "it.unimi.dsi.fastutil.shorts.*",
     )
+
+internal const val PARAM_ENUMERATION_COUNT = 10
