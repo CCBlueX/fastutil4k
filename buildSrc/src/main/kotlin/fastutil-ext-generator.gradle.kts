@@ -17,6 +17,7 @@ val generateAllTask = tasks.register("generate-all") {
         typedIterableForEachTask,
         arrayAndListSwapTask,
         enumSetTask,
+        enumMapTask,
     )
 }
 
@@ -565,6 +566,54 @@ val enumSetTask = tasks.register<GenerateSrcTask>("enum-set") {
             withIndent {
                 toEnumSet("this")
             }
+            appendLine("}")
+            appendLine()
+        }
+    }
+}
+
+val enumMapTask = tasks.register<GenerateSrcTask>("enum-map") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+    imports.add("java.util.EnumMap")
+
+    content {
+        val generic = "<reified K : Enum<K>, V>"
+
+        appendLine("inline fun $generic enumMapOf(): EnumMap<K, V> = EnumMap(K::class.java)")
+        appendLine()
+
+        appendLine("inline fun $generic enumMapOf(mapping: (K) -> V): EnumMap<K, V> {")
+
+        appendLine("inline fun $generic enumMapOf(mapping: (K) -> V): EnumMap<K, V> {")
+        withIndent {
+            appendLine("val map = EnumMap<K, V>(K::class.java)")
+            appendLine("for (k in K::class.java.enumConstants) {")
+            withIndent {
+                appendLine("map.put(k, mapping(k))")
+            }
+            appendLine("}")
+            appendLine("return map")
+        }
+        appendLine("}")
+        appendLine()
+
+        for (i in 1..PARAM_ENUMERATION_COUNT) {
+            appendLine("inline fun $generic enumMapOf(")
+            repeat(i) {
+                indent()
+                appendLine("k$it: K, v$it: V,")
+            }
+            appendLine("): EnumMap<K, V> {")
+            indent()
+            appendLine("val map = EnumMap<K, V>(K::class.java)")
+            repeat(i) {
+                indent()
+                appendLine("map.put(k$it, v$it)")
+            }
+            indent()
+            appendLine("return map")
             appendLine("}")
             appendLine()
         }
