@@ -9,6 +9,7 @@ val generateAllTask = tasks.register("generate-all") {
         pairComponentNTask,
         pairFactoryTask,
         immutableListSetFactoryTask,
+        emptyAndSingletonMapFactoryTask,
         mutableListFactoryTask,
         mutableSetFactoryTask,
         mutableMapFactoryTask,
@@ -352,6 +353,53 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
     }
 }
 
+/**
+ * intBooleanMapOf()
+ * intBooleanMapOf(1, true)
+ */
+val emptyAndSingletonMapFactoryTask = tasks.register<GenerateSrcTask>("empty-and-singleton-map-factory") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+    imports.addAll(IMPORT_ALL)
+
+    content {
+        forEachMapTypes { left, right ->
+            val genericType = when {
+                left.isGeneric && right.isGeneric -> "<K, V>"
+                left.isGeneric -> "<K>"
+                right.isGeneric -> "<V>"
+                else -> null
+            }
+
+            val keyType = if (left.isGeneric) "K" else left.typeName
+            val valueType = if (right.isGeneric) "V" else right.typeName
+
+            val functionName = left.lowercaseName + right.typeName + "MapOf"
+            val mapTypeName = left.typeName + "2" + right.typeName + "Map"
+            val mapTypeNameWithGeneric = if (genericType != null) mapTypeName + genericType else mapTypeName
+
+            append("inline fun ")
+            if (genericType != null) {
+                append(genericType)
+                space()
+            }
+            append("$functionName(): $mapTypeNameWithGeneric = ${mapTypeName}s.")
+            if (genericType != null) {
+                appendLine("emptyMap()")
+            } else {
+                appendLine("EMPTY_MAP")
+            }
+
+            append("inline fun ")
+            if (genericType != null) {
+                append(genericType)
+                space()
+            }
+            appendLine("$functionName(k: $keyType, v: $valueType): $mapTypeNameWithGeneric = ${mapTypeName}s.singleton(k, v)")
+        }
+    }
+}
 
 /**
  * intLongArrayMapOf
