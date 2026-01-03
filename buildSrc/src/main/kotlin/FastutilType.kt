@@ -2,17 +2,18 @@ enum class FastutilType(
     val typeName: String,
     val lowercaseName: String,
     val isGeneric: Boolean,
+    val packageName: String,
 ) {
-    BOOLEAN("Boolean", "boolean", false),
-    BYTE("Byte", "byte", false),
-    CHAR("Char", "char", false),
-    DOUBLE("Double", "double", false),
-    FLOAT("Float", "float", false),
-    INT("Int", "int", false),
-    LONG("Long", "long", false),
-    OBJECT("Object", "object", true),
-    SHORT("Short", "short", false),
-    REFERENCE("Reference", "reference", true),
+    BOOLEAN("Boolean", "boolean", false, "it.unimi.dsi.fastutil.booleans"),
+    BYTE("Byte", "byte", false, "it.unimi.dsi.fastutil.bytes"),
+    CHAR("Char", "char", false, "it.unimi.dsi.fastutil.chars"),
+    DOUBLE("Double", "double", false, "it.unimi.dsi.fastutil.doubles"),
+    FLOAT("Float", "float", false, "it.unimi.dsi.fastutil.floats"),
+    INT("Int", "int", false, "it.unimi.dsi.fastutil.ints"),
+    LONG("Long", "long", false, "it.unimi.dsi.fastutil.longs"),
+    OBJECT("Object", "object", true, "it.unimi.dsi.fastutil.objects"),
+    SHORT("Short", "short", false, "it.unimi.dsi.fastutil.shorts"),
+    REFERENCE("Reference", "reference", true, "it.unimi.dsi.fastutil.objects"),
     ;
 
     override fun toString(): String = typeName

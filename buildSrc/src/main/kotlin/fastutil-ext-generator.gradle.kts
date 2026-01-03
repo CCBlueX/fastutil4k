@@ -550,19 +550,24 @@ val typedIterableForEachTask = tasks.register<GenerateSrcTask>("typed-iterable-f
 
     content {
         forEachPrimitiveTypes { type ->
-            // Iterator forEach
-            appendLine("inline fun ${type}Iterator.forEach${type}(action: (${type}) -> Unit) { while (hasNext()) action(next$type()) }")
+            // Iterator forEach (full name)
+            appendLine("inline fun ${type.packageName}.${type}Iterator.forEach${type}(action: (${type}) -> Unit) {")
+            appendLine("    while (hasNext()) action(next$type())")
+            appendLine("}")
 
             // Iterable forEach
-            appendLine("inline fun ${type}Iterable.forEach${type}(action: (${type}) -> Unit) = iterator().forEach(action)")
+            appendLine("inline fun ${type}Iterable.forEach${type}(action: (${type}) -> Unit) = iterator().forEach$type(action)")
 
             // Iterable onEach
-            appendLine("inline fun <T : ${type}Iterable> T.onEach${type}(action: (${type}) -> Unit): T = apply { forEach(action) }")
+            appendLine("inline fun <T : ${type}Iterable> T.onEach${type}(action: (${type}) -> Unit): T {")
+            appendLine("    forEach$type(action)")
+            appendLine("    return this")
+            appendLine("}")
 
             // Iterable forEachIndexed
             appendLine("inline fun ${type}Iterable.forEach${type}Indexed(action: (index: Int, ${type}) -> Unit) {")
             appendLine("    var i = 0")
-            appendLine("    iterator().forEach { action(i++, it) }")
+            appendLine("    forEach$type { action(i++, it) }")
             appendLine("}")
         }
     }
