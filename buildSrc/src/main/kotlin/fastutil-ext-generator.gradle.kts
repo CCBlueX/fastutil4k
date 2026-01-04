@@ -20,6 +20,7 @@ val generateAllTask = tasks.register("generate-all") {
         arrayAndListSwapTask,
         enumSetTask,
         enumMapTask,
+        forEachIsInstanceTask,
     )
 }
 
@@ -744,6 +745,23 @@ val enumMapTask = tasks.register<GenerateSrcTask>("enum-map") {
             appendLine("return map")
             appendLine("}")
             appendLine()
+        }
+    }
+}
+
+val forEachIsInstanceTask = tasks.register<GenerateSrcTask>("forEachIsInstance") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+    imports.add("java.util.stream.Stream")
+
+    content {
+        for (receiver in arrayOf("Array<*>", "Iterable<*>", "Iterator<*>", "Sequence<*>", "Stream<*>")) {
+            appendLine("inline fun <reified R> $receiver.forEachIsInstance(action: (R) -> Unit) {")
+            appendLine("    for (element in this) {")
+            appendLine("        if (element is R) action(element)")
+            appendLine("    }")
+            appendLine("}")
         }
     }
 }
