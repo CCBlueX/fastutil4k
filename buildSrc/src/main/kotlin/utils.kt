@@ -1,11 +1,12 @@
 import org.gradle.api.Project
+import org.intellij.lang.annotations.Language
 
 internal inline fun forEachTypes(block: (type: FastutilType) -> Unit) {
-    FastutilType.values().forEach(block)
+    FastutilType.entries.forEach(block)
 }
 
 internal inline fun forEachPrimitiveTypes(block: (type: FastutilType) -> Unit) {
-    FastutilType.values().forEach {
+    FastutilType.entries.forEach {
         if (it.isGeneric) return@forEach
         block(it)
     }
@@ -35,6 +36,11 @@ fun StringAppendable.space(n: Int = 1) = append(" ".repeat(n))
 
 inline fun StringAppendable.appendLine(line: String) {
     append(line)
+    appendLine()
+}
+
+inline fun StringAppendable.appendMultiline(@Language("kotlin") line: String) {
+    append(line.trimIndent())
     appendLine()
 }
 

@@ -16,5 +16,12 @@ enum class FastutilType(
     REFERENCE("Reference", "reference", true, "it.unimi.dsi.fastutil.objects"),
     ;
 
+    val kotlinType: String?
+        get() = when (this) {
+            REFERENCE -> null
+            OBJECT -> "Any"
+            else -> typeName
+        }
+
     override fun toString(): String = typeName
 }
