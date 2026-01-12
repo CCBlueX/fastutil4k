@@ -144,7 +144,7 @@ sealed interface Pool<E : Any> {
         // Internal storage for pooled objects
         private val stack = ReferenceArrayList<E>()
 
-        private val batchBorrowBuffer = ReferenceArrayList<E>()
+        private var batchBorrowBuffer: ReferenceArrayList<E>? = null
 
         override fun borrow(): E = if (stack.isEmpty) initializer.get() else stack.pop()
 
@@ -152,6 +152,10 @@ sealed interface Pool<E : Any> {
             destination: MutableCollection<E>,
             count: Int,
         ) {
+            fun getBuffer() = this.batchBorrowBuffer ?: ReferenceArrayList<E>().also {
+                this.batchBorrowBuffer = it
+            }
+
             if (count < 0) throw IllegalArgumentException("count ($count) < 0")
             if (count == 0) return
 
@@ -163,6 +167,7 @@ sealed interface Pool<E : Any> {
                     0 -> return
                     1 -> destination.add(initializer.get())
                     else -> {
+                        val batchBorrowBuffer = getBuffer()
                         batchBorrowBuffer.size(remaining)
                         repeat(remaining) { batchBorrowBuffer[it] = initializer.get() }
                         destination.addAll(batchBorrowBuffer)
@@ -170,6 +175,7 @@ sealed interface Pool<E : Any> {
                     }
                 }
             } else {
+                val batchBorrowBuffer = getBuffer()
                 batchBorrowBuffer.size(count)
                 stack.getElements(size - count, batchBorrowBuffer.elements(), 0, count)
                 stack.size(size - count)
