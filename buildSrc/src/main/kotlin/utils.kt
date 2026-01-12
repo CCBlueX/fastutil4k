@@ -2,11 +2,11 @@ import org.gradle.api.Project
 import org.intellij.lang.annotations.Language
 
 internal inline fun forEachTypes(block: (type: FastutilType) -> Unit) {
-    FastutilType.entries.forEach(block)
+    FastutilType.values().forEach(block)
 }
 
 internal inline fun forEachPrimitiveTypes(block: (type: FastutilType) -> Unit) {
-    FastutilType.entries.forEach {
+    FastutilType.values().forEach {
         if (it.isGeneric) return@forEach
         block(it)
     }
