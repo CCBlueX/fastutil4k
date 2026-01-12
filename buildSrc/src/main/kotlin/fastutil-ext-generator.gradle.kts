@@ -21,6 +21,11 @@ val generateAllTask = tasks.register("generate-all") {
         enumSetTask,
         enumMapTask,
         forEachIsInstanceTask,
+        functionInvokeTask,
+        predicateInvokeTask,
+        consumerInvokeTask,
+        unaryOperatorInvokeTask,
+        binaryOperatorInvokeTask,
     )
 }
 
@@ -88,16 +93,19 @@ val syncUnmodifiableTask = tasks.register<GenerateSrcTask>("sync-unmodifiable") 
                     appendLine("inline fun <K, V> ${rawType}<K, V>.synchronized(lock: Any): ${rawType}<K, V> = ${rawType}s.synchronize(this, lock)")
                     appendLine("inline fun <K, V> ${rawType}<K, V>.unmodifiable(): ${rawType}<K, V> = ${rawType}s.unmodifiable(this)")
                 }
+
                 left.isGeneric -> {
                     appendLine("inline fun <K> ${rawType}<K>.synchronized(): ${rawType}<K> = ${rawType}s.synchronize(this)")
                     appendLine("inline fun <K> ${rawType}<K>.synchronized(lock: Any): ${rawType}<K> = ${rawType}s.synchronize(this, lock)")
                     appendLine("inline fun <K> ${rawType}<K>.unmodifiable(): ${rawType}<K> = ${rawType}s.unmodifiable(this)")
                 }
+
                 right.isGeneric -> {
                     appendLine("inline fun <V> ${rawType}<V>.synchronized(): ${rawType}<V> = ${rawType}s.synchronize(this)")
                     appendLine("inline fun <V> ${rawType}<V>.synchronized(lock: Any): ${rawType}<V> = ${rawType}s.synchronize(this, lock)")
                     appendLine("inline fun <V> ${rawType}<V>.unmodifiable(): ${rawType}<V> = ${rawType}s.unmodifiable(this)")
                 }
+
                 else -> {
                     appendLine("inline fun ${rawType}.synchronized(): $rawType = ${rawType}s.synchronize(this)")
                     appendLine("inline fun ${rawType}.synchronized(lock: Any): $rawType = ${rawType}s.synchronize(this, lock)")
@@ -130,14 +138,17 @@ val pairComponentNTask = tasks.register<GenerateSrcTask>("pair-componentN") {
                         appendLine("inline operator fun <K, V> ${left}${right}Pair<K, V>.component1() = left()")
                         appendLine("inline operator fun <K, V> ${left}${right}Pair<K, V>.component2() = right()")
                     }
+
                     left.isGeneric -> {
                         appendLine("inline operator fun <K> ${left}${right}Pair<K>.component1() = left()")
                         appendLine("inline operator fun ${left}${right}Pair<*>.component2() = right${right}()")
                     }
+
                     right.isGeneric -> {
                         appendLine("inline operator fun ${left}${right}Pair<*>.component1() = left${left}()")
                         appendLine("inline operator fun <V> ${left}${right}Pair<V>.component2() = right()")
                     }
+
                     else -> {
                         appendLine("inline operator fun ${left}${right}Pair.component1() = left${left}()")
                         appendLine("inline operator fun ${left}${right}Pair.component2() = right${right}()")
@@ -295,6 +306,7 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
                             if (type != FastutilType.BOOLEAN)
                                 appendLine("inline fun ${type.lowercaseName}${setType}Of(strategy: ${type}Hash.Strategy, vararg elements: ${type}): ${type}OpenCustomHashSet = ${type}OpenCustomHashSet(elements, strategy)")
                         }
+
                         else -> {
                             appendLine("inline fun ${type.lowercaseName}${setType}Of(element: ${type}): ${type}${fullType} = ${type}${fullType}.of(element)")
                             appendLine("inline fun ${type.lowercaseName}${setType}Of(vararg elements: ${type}): ${type}${fullType} = ${type}${fullType}(elements)")
@@ -312,6 +324,7 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(): ${type}${fullType}<T> = ${type}${fullType}()")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
                 }
+
                 "RBTree", "AVLTree" -> {
                     appendLine("inline fun <T : Comparable<T>> ${type.lowercaseName}${setType}Of(): ${type}${fullType}<T> = ${type}${fullType}()")
                     appendLine("inline fun <T : Comparable<T>> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
@@ -319,6 +332,7 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(comparator: Comparator<in T>): ${type}${fullType}<T> = ${type}${fullType}(comparator)")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(comparator: Comparator<in T>, vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements, comparator)")
                 }
+
                 "Hash" -> {
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(): ${type}${fullType}<T> = ${type}${fullType}()")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(element: T): ${type}${fullType}<T> = ${type}${fullType}.of(element)")
@@ -501,18 +515,21 @@ val mapFastIterableIteratorTask = tasks.register<GenerateSrcTask>("map-fast") {
                     appendLine("inline fun <K, V> ${rawType}<K, V>.fastForEach(consumer: Consumer<${entryRawType}<K, V>>) = ${rawType}s.fastForEach(this, consumer)")
                     appendLine("inline fun <K, V> ${rawType}<K, V>.fastForEach(crossinline action: (key: K, value: V) -> Unit) = fastForEach { action(it.key, it.value) }")
                 }
+
                 left.isGeneric -> {
                     appendLine("inline fun <K> ${rawType}<K>.fastIterable(): ObjectIterable<${entryRawType}<K>> = ${rawType}s.fastIterable(this)")
                     appendLine("inline fun <K> ${rawType}<K>.fastIterator(): ObjectIterator<${entryRawType}<K>> = ${rawType}s.fastIterator(this)")
                     appendLine("inline fun <K> ${rawType}<K>.fastForEach(consumer: Consumer<${entryRawType}<K>>) = ${rawType}s.fastForEach(this, consumer)")
                     appendLine("inline fun <K> ${rawType}<K>.fastForEach(crossinline action: (key: K, value: $right) -> Unit) = fastForEach { action(it.key, it.${right.lowercaseName}Value) }")
                 }
+
                 right.isGeneric -> {
                     appendLine("inline fun <V> ${rawType}<V>.fastIterable(): ObjectIterable<${entryRawType}<V>> = ${rawType}s.fastIterable(this)")
                     appendLine("inline fun <V> ${rawType}<V>.fastIterator(): ObjectIterator<${entryRawType}<V>> = ${rawType}s.fastIterator(this)")
                     appendLine("inline fun <V> ${rawType}<V>.fastForEach(consumer: Consumer<${entryRawType}<V>>) = ${rawType}s.fastForEach(this, consumer)")
                     appendLine("inline fun <V> ${rawType}<V>.fastForEach(crossinline action: (key: $left, value: V) -> Unit) = fastForEach { action(it.${left.lowercaseName}Key, it.value) }")
                 }
+
                 else -> {
                     appendLine("inline fun ${rawType}.fastIterable(): ObjectIterable<${entryRawType}> = ${rawType}s.fastIterable(this)")
                     appendLine("inline fun ${rawType}.fastIterator(): ObjectIterator<${entryRawType}> = ${rawType}s.fastIterator(this)")
@@ -764,6 +781,72 @@ val forEachIsInstanceTask = tasks.register<GenerateSrcTask>("forEachIsInstance")
             appendLine("        if (element is R) action(element)")
             appendLine("    }")
             appendLine("}")
+        }
+    }
+}
+
+val functionInvokeTask = tasks.register<GenerateSrcTask>("function-invoke") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+    imports.addAll(IMPORT_ALL)
+
+    content {
+        forEachTypes { from ->
+            forEachTypes { to ->
+                when {
+                    from.isGeneric && to.isGeneric -> appendMultiline("inline operator fun <K, V> ${from.typeName}2${to.typeName}Function<K, V>.invoke(key: K): V = get(key)")
+                    from.isGeneric -> appendMultiline("inline operator fun <K> ${from.typeName}2${to.typeName}Function<K>.invoke(key: K): ${to.kotlinType} = get${to.typeName}(key)")
+                    to.isGeneric -> appendMultiline("inline operator fun <V> ${from.typeName}2${to.typeName}Function<V>.invoke(key: ${from.kotlinType}): V = get(key)")
+                    else -> appendMultiline("inline operator fun ${from.typeName}2${to.typeName}Function.invoke(key: ${from.kotlinType}): ${to.kotlinType} = get(key)")
+                }
+            }
+        }
+    }
+}
+
+val predicateInvokeTask = tasks.register<GenerateSrcTask>("predicate-invoke") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+
+    content {
+        forEachPrimitiveTypes { from ->
+            appendMultiline("inline operator fun ${from.packageName}.${from.typeName}Predicate.invoke(value: ${from.kotlinType}): Boolean = test(value)")
+        }
+    }
+}
+
+val consumerInvokeTask = tasks.register<GenerateSrcTask>("consumer-invoke") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+
+    content {
+        forEachPrimitiveTypes { from ->
+            appendMultiline("inline operator fun ${from.packageName}.${from.typeName}Consumer.invoke(value: ${from.kotlinType}) = accept(value)")
+        }
+    }
+}
+
+val unaryOperatorInvokeTask = tasks.register<GenerateSrcTask>("unary-operator-invoke") {
+    group = TASK_GROUP
+    packageName.set(PACKAGE)
+
+    content {
+        forEachPrimitiveTypes { from ->
+            appendMultiline("inline operator fun ${from.packageName}.${from.typeName}UnaryOperator.invoke(x: ${from.kotlinType}): ${from.kotlinType} = apply(x)")
+        }
+    }
+}
+
+val binaryOperatorInvokeTask = tasks.register<GenerateSrcTask>("binary-operator-invoke") {
+    group = TASK_GROUP
+    packageName.set(PACKAGE)
+
+    content {
+        forEachPrimitiveTypes { from ->
+            appendMultiline("inline operator fun ${from.packageName}.${from.typeName}BinaryOperator.invoke(x: ${from.kotlinType}, y: ${from.kotlinType}): ${from.kotlinType} = apply(x, y)")
         }
     }
 }
