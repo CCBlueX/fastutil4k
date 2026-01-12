@@ -21,6 +21,11 @@ val generateAllTask = tasks.register("generate-all") {
         enumSetTask,
         enumMapTask,
         forEachIsInstanceTask,
+        functionInvokeTask,
+        predicateInvokeTask,
+        consumerInvokeTask,
+        unaryOperatorInvokeTask,
+        binaryOperatorInvokeTask,
     )
 }
 
