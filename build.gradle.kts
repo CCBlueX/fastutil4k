@@ -17,7 +17,7 @@ val projectUrl = "https://github.com/ccbluex/$projectName"
 
 allprojects {
     group = "net.ccbluex"
-    version = "0.2.3"
+    version = "0.2.4"
 
     repositories {
         mavenLocal()
