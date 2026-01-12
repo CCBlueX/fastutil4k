@@ -1,3 +1,5 @@
+import org.jetbrains.dokka.gradle.tasks.DokkaBaseTask
+
 plugins {
     id("fastutil-ext-generator")
 }
@@ -15,10 +17,12 @@ kotlin {
     }
 }
 
-tasks.dokkaHtmlPartial {
-    dependsOn("generate-all")
-
+dokka {
     dokkaSourceSets.configureEach {
         sourceRoots.from(fastutilGeneratorOutput)
     }
+}
+
+tasks.withType<DokkaBaseTask>().configureEach {
+    dependsOn("generate-all")
 }

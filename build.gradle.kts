@@ -1,5 +1,4 @@
 import com.diffplug.spotless.LineEnding
-import org.jetbrains.dokka.gradle.DokkaTask
 
 plugins {
     `java-library`
@@ -25,7 +24,12 @@ allprojects {
     }
 }
 
-tasks.withType<DokkaTask>().configureEach {
+dependencies {
+    dokka(project(":fastutil4k-extensions-only"))
+    dokka(project(":fastutil4k-more-collections"))
+}
+
+dokka {
     dokkaSourceSets.configureEach {
         jdkVersion.set(8)
     }
