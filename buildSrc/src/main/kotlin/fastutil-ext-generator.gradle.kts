@@ -209,10 +209,10 @@ val immutableListSetFactoryTask = tasks.register<GenerateSrcTask>("immutable-lis
                 appendLine("inline fun <T> ${type}Set<T>?.orEmpty(): ${type}Set<T> = this ?: $emptySet")
 
                 appendLine("inline fun <T> ${type.lowercaseName}ListOf(): ${type}List<T> = $emptyList")
-//                appendLine("inline fun <T> ${type.lowercaseName}SetOf(): ${type}Set<T> = $emptySet")
+                appendLine("inline fun <T> ${type.lowercaseName}SetOf(): ${type}Set<T> = $emptySet")
 
                 appendLine("inline fun <T> ${type.lowercaseName}ListOf(element: T): ${type}List<T> = ${singletonList()}")
-//                appendLine("inline fun <T> ${type.lowercaseName}SetOf(element: T): ${type}Set<T> = ${singletonSet()}")
+                appendLine("inline fun <T> ${type.lowercaseName}SetOf(element: T): ${type}Set<T> = ${singletonSet()}")
 
                 appendLine("inline fun <T> ${type.lowercaseName}ListOf(vararg elements: T): ${type}List<T> =")
                 appendLine("when(elements.size) { 0 -> $emptyList 1 -> ${singletonList("elements[0]")} else -> ${type}ImmutableList(elements) }")
@@ -224,10 +224,10 @@ val immutableListSetFactoryTask = tasks.register<GenerateSrcTask>("immutable-lis
                 appendLine("inline fun ${type}Set?.orEmpty(): ${type}Set = this ?: $emptySet")
 
                 appendLine("inline fun ${type.lowercaseName}ListOf(): ${type}List = $emptyList")
-//                appendLine("inline fun ${type.lowercaseName}SetOf(): ${type}Set = $emptySet")
+                appendLine("inline fun ${type.lowercaseName}SetOf(): ${type}Set = $emptySet")
 
                 appendLine("inline fun ${type.lowercaseName}ListOf(element: ${type}): ${type}List = ${singletonList()}")
-//                appendLine("inline fun ${type.lowercaseName}SetOf(element: ${type}): ${type}Set = ${singletonSet()}")
+                appendLine("inline fun ${type.lowercaseName}SetOf(element: ${type}): ${type}Set = ${singletonSet()}")
 
                 appendLine("inline fun ${type.lowercaseName}ListOf(vararg elements: ${type}): ${type}List =")
                 appendLine("when(elements.size) { 0 -> $emptyList 1 -> ${singletonList("elements[0]")} else -> ${type}ImmutableList(elements) }")
@@ -235,6 +235,7 @@ val immutableListSetFactoryTask = tasks.register<GenerateSrcTask>("immutable-lis
                 appendLine("inline fun ${type}Array.as${type}List(): ${type}List = ${type}ImmutableList(this)")
                 appendLine("inline fun ${type}Array.as${type}List(offset: Int = 0, length: Int = this.size): ${type}List = ${type}ImmutableList(this, offset, length)")
             }
+            appendLine()
         }
     }
 }
@@ -257,12 +258,23 @@ val mutableListFactoryTask = tasks.register<GenerateSrcTask>("mutable-list-facto
                 appendLine("inline fun <T> ${type.lowercaseName}MutableListOf(vararg elements: T): ${type}List<T> = ${type}ArrayList(elements)")
 
                 appendLine("inline fun <T> Array<out T>.to${type}MutableList(offset: Int = 0, length: Int = this.size): ${type}List<T> = ${type}ArrayList(this, offset, length)")
+
+                appendLine("inline fun <T> ${type.lowercaseName}ArrayListOf(): ${type}List<T> = ${type}ArrayList()")
+                appendLine("inline fun <T> ${type.lowercaseName}ArrayListOf(vararg elements: T): ${type}List<T> = ${type}ArrayList(elements)")
+
+                appendLine("inline fun <T> Array<out T>.to${type}ArrayList(offset: Int = 0, length: Int = this.size): ${type}List<T> = ${type}ArrayList(this, offset, length)")
             } else {
                 appendLine("inline fun ${type.lowercaseName}MutableListOf(): ${type}List = ${type}ArrayList()")
                 appendLine("inline fun ${type.lowercaseName}MutableListOf(element: ${type}): ${type}List = ${type}ArrayList.wrap(${type.lowercaseName}ArrayOf(element))")
                 appendLine("inline fun ${type.lowercaseName}MutableListOf(vararg elements: ${type}): ${type}List = ${type}ArrayList(elements)")
 
                 appendLine("inline fun ${type}Array.to${type}MutableList(offset: Int = 0, length: Int = this.size): ${type}List = ${type}ArrayList(this, offset, length)")
+
+                appendLine("inline fun ${type.lowercaseName}ArrayListOf(): ${type}List = ${type}ArrayList()")
+                appendLine("inline fun ${type.lowercaseName}ArrayListOf(element: ${type}): ${type}List = ${type}ArrayList.wrap(${type.lowercaseName}ArrayOf(element))")
+                appendLine("inline fun ${type.lowercaseName}ArrayListOf(vararg elements: ${type}): ${type}List = ${type}ArrayList(elements)")
+
+                appendLine("inline fun ${type}Array.to${type}ArrayList(offset: Int = 0, length: Int = this.size): ${type}List = ${type}ArrayList(this, offset, length)")
             }
         }
     }
