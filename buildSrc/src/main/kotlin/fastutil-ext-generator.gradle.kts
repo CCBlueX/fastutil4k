@@ -789,6 +789,9 @@ val forEachIsInstanceTask = tasks.register<GenerateSrcTask>("forEachIsInstance")
 
     content {
         for (receiver in arrayOf("Array<*>", "Iterable<*>", "Iterator<*>", "Sequence<*>", "Stream<*>")) {
+            appendLine("/**")
+            appendLine(" * Equivalent to `this.filterIsInstance<R>.forEach { action(it) }`")
+            appendLine(" */")
             appendLine("inline fun <reified R> $receiver.forEachIsInstance(action: (R) -> Unit) {")
             appendLine("    for (element in this) {")
             appendLine("        if (element is R) action(element)")
@@ -806,6 +809,9 @@ val filterIsInstanceToTask = tasks.register<GenerateSrcTask>("filterIsInstanceTo
 
     content {
         for (receiver in arrayOf("Array<*>", "Iterable<*>", "Iterator<*>", "Sequence<*>", "Stream<*>")) {
+            appendLine("/**")
+            appendLine(" * Equivalent to `this.filterIsInstance<R>.filter { predicate(it) }`")
+            appendLine(" */")
             appendLine("inline fun <reified R, C : MutableCollection<in R>> $receiver.filterIsInstanceTo(destination: C, predicate: (R) -> Boolean): C {")
             appendLine("    for (element in this) {")
             appendLine("        if (element is R && predicate(element)) destination.add(element)")
