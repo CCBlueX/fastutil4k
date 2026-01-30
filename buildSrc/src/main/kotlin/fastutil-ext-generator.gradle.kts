@@ -21,6 +21,7 @@ val generateAllTask = tasks.register("generate-all") {
         enumSetTask,
         enumMapTask,
         forEachIsInstanceTask,
+        filterIsInstanceToTask,
         functionInvokeTask,
         predicateInvokeTask,
         consumerInvokeTask,
@@ -792,6 +793,24 @@ val forEachIsInstanceTask = tasks.register<GenerateSrcTask>("forEachIsInstance")
             appendLine("    for (element in this) {")
             appendLine("        if (element is R) action(element)")
             appendLine("    }")
+            appendLine("}")
+        }
+    }
+}
+
+val filterIsInstanceToTask = tasks.register<GenerateSrcTask>("filterIsInstanceTo-enhanced") {
+    group = TASK_GROUP
+
+    packageName.set(PACKAGE)
+    imports.add("java.util.stream.Stream")
+
+    content {
+        for (receiver in arrayOf("Array<*>", "Iterable<*>", "Iterator<*>", "Sequence<*>", "Stream<*>")) {
+            appendLine("inline fun <reified R, C : MutableCollection<in R>> $receiver.filterIsInstanceTo(destination: C, predicate: (R) -> Boolean): C {")
+            appendLine("    for (element in this) {")
+            appendLine("        if (element is R && predicate(element)) destination.add(element)")
+            appendLine("    }")
+            appendLine("    return destination")
             appendLine("}")
         }
     }
