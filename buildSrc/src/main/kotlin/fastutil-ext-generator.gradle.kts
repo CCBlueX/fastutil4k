@@ -260,10 +260,10 @@ val mutableListFactoryTask = tasks.register<GenerateSrcTask>("mutable-list-facto
 
                 appendLine("inline fun <T> Array<out T>.to${type}MutableList(offset: Int = 0, length: Int = this.size): ${type}List<T> = ${type}ArrayList(this, offset, length)")
 
-                appendLine("inline fun <T> ${type.lowercaseName}ArrayListOf(): ${type}List<T> = ${type}ArrayList()")
-                appendLine("inline fun <T> ${type.lowercaseName}ArrayListOf(vararg elements: T): ${type}List<T> = ${type}ArrayList(elements)")
+                appendLine("inline fun <T> ${type.lowercaseName}ArrayListOf(): ${type}ArrayList<T> = ${type}ArrayList()")
+                appendLine("inline fun <T> ${type.lowercaseName}ArrayListOf(vararg elements: T): ${type}ArrayList<T> = ${type}ArrayList(elements)")
 
-                appendLine("inline fun <T> Array<out T>.to${type}ArrayList(offset: Int = 0, length: Int = this.size): ${type}List<T> = ${type}ArrayList(this, offset, length)")
+                appendLine("inline fun <T> Array<out T>.to${type}ArrayList(offset: Int = 0, length: Int = this.size): ${type}ArrayList<T> = ${type}ArrayList(this, offset, length)")
             } else {
                 appendLine("inline fun ${type.lowercaseName}MutableListOf(): ${type}List = ${type}ArrayList()")
                 appendLine("inline fun ${type.lowercaseName}MutableListOf(element: ${type}): ${type}List = ${type}ArrayList.wrap(${type.lowercaseName}ArrayOf(element))")
@@ -271,11 +271,11 @@ val mutableListFactoryTask = tasks.register<GenerateSrcTask>("mutable-list-facto
 
                 appendLine("inline fun ${type}Array.to${type}MutableList(offset: Int = 0, length: Int = this.size): ${type}List = ${type}ArrayList(this, offset, length)")
 
-                appendLine("inline fun ${type.lowercaseName}ArrayListOf(): ${type}List = ${type}ArrayList()")
-                appendLine("inline fun ${type.lowercaseName}ArrayListOf(element: ${type}): ${type}List = ${type}ArrayList.wrap(${type.lowercaseName}ArrayOf(element))")
-                appendLine("inline fun ${type.lowercaseName}ArrayListOf(vararg elements: ${type}): ${type}List = ${type}ArrayList(elements)")
+                appendLine("inline fun ${type.lowercaseName}ArrayListOf(): ${type}ArrayList = ${type}ArrayList()")
+                appendLine("inline fun ${type.lowercaseName}ArrayListOf(element: ${type}): ${type}ArrayList = ${type}ArrayList.wrap(${type.lowercaseName}ArrayOf(element))")
+                appendLine("inline fun ${type.lowercaseName}ArrayListOf(vararg elements: ${type}): ${type}ArrayList = ${type}ArrayList(elements)")
 
-                appendLine("inline fun ${type}Array.to${type}ArrayList(offset: Int = 0, length: Int = this.size): ${type}List = ${type}ArrayList(this, offset, length)")
+                appendLine("inline fun ${type}Array.to${type}ArrayList(offset: Int = 0, length: Int = this.size): ${type}ArrayList = ${type}ArrayList(this, offset, length)")
             }
         }
     }
