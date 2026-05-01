@@ -43,6 +43,7 @@ val syncUnmodifiableTask = tasks.register<GenerateSrcTask>("sync-unmodifiable") 
     imports.add("java.util.*")
     imports.add("it.unimi.dsi.fastutil.PriorityQueue")
     imports.add("it.unimi.dsi.fastutil.PriorityQueues")
+    imports.add("org.jetbrains.annotations.UnmodifiableView")
     imports.addAll(IMPORT_ALL)
 
     content {
@@ -51,10 +52,10 @@ val syncUnmodifiableTask = tasks.register<GenerateSrcTask>("sync-unmodifiable") 
         for (rawType in arrayOf("Collection", "List", "Map", "Set", "NavigableMap", "NavigableSet", "SortedMap", "SortedSet")) {
             val ktType = if (rawType in arrayOf("Collection", "List", "Map", "Set")) "Mutable$rawType" else rawType
             if (rawType.endsWith("Map")) {
-                appendLine("inline fun <K, V> ${ktType}<K, V>.unmodifiable(): ${rawType}<K, V> = Collections.unmodifiable${rawType}(this)")
+                appendLine("inline fun <K, V> ${ktType}<K, V>.unmodifiable(): @UnmodifiableView ${rawType}<K, V> = Collections.unmodifiable${rawType}(this)")
                 appendLine("inline fun <K, V> ${ktType}<K, V>.synchronized(): ${ktType}<K, V> = Collections.synchronized${rawType}(this)")
             } else {
-                appendLine("inline fun <T> ${ktType}<T>.unmodifiable(): ${rawType}<T> = Collections.unmodifiable${rawType}(this)")
+                appendLine("inline fun <T> ${ktType}<T>.unmodifiable(): @UnmodifiableView ${rawType}<T> = Collections.unmodifiable${rawType}(this)")
                 appendLine("inline fun <T> ${ktType}<T>.synchronized(): ${ktType}<T> = Collections.synchronized${rawType}(this)")
             }
         }
@@ -65,11 +66,11 @@ val syncUnmodifiableTask = tasks.register<GenerateSrcTask>("sync-unmodifiable") 
                 if (type.isGeneric) {
                     appendLine("inline fun <T> ${rawType}<T>.synchronized(): ${rawType}<T> = ${rawType}s.synchronize(this)")
                     appendLine("inline fun <T> ${rawType}<T>.synchronized(lock: Any): ${rawType}<T> = ${rawType}s.synchronize(this, lock)")
-                    appendLine("inline fun <T> ${rawType}<T>.unmodifiable(): ${rawType}<T> = ${rawType}s.unmodifiable(this)")
+                    appendLine("inline fun <T> ${rawType}<T>.unmodifiable(): @UnmodifiableView ${rawType}<T> = ${rawType}s.unmodifiable(this)")
                 } else {
                     appendLine("inline fun ${rawType}.synchronized(): $rawType = ${rawType}s.synchronize(this)")
                     appendLine("inline fun ${rawType}.synchronized(lock: Any): $rawType = ${rawType}s.synchronize(this, lock)")
-                    appendLine("inline fun ${rawType}.unmodifiable(): $rawType = ${rawType}s.unmodifiable(this)")
+                    appendLine("inline fun ${rawType}.unmodifiable(): @UnmodifiableView $rawType = ${rawType}s.unmodifiable(this)")
                 }
             }
         }
@@ -92,25 +93,25 @@ val syncUnmodifiableTask = tasks.register<GenerateSrcTask>("sync-unmodifiable") 
                 left.isGeneric && right.isGeneric -> {
                     appendLine("inline fun <K, V> ${rawType}<K, V>.synchronized(): ${rawType}<K, V> = ${rawType}s.synchronize(this)")
                     appendLine("inline fun <K, V> ${rawType}<K, V>.synchronized(lock: Any): ${rawType}<K, V> = ${rawType}s.synchronize(this, lock)")
-                    appendLine("inline fun <K, V> ${rawType}<K, V>.unmodifiable(): ${rawType}<K, V> = ${rawType}s.unmodifiable(this)")
+                    appendLine("inline fun <K, V> ${rawType}<K, V>.unmodifiable(): @UnmodifiableView ${rawType}<K, V> = ${rawType}s.unmodifiable(this)")
                 }
 
                 left.isGeneric -> {
                     appendLine("inline fun <K> ${rawType}<K>.synchronized(): ${rawType}<K> = ${rawType}s.synchronize(this)")
                     appendLine("inline fun <K> ${rawType}<K>.synchronized(lock: Any): ${rawType}<K> = ${rawType}s.synchronize(this, lock)")
-                    appendLine("inline fun <K> ${rawType}<K>.unmodifiable(): ${rawType}<K> = ${rawType}s.unmodifiable(this)")
+                    appendLine("inline fun <K> ${rawType}<K>.unmodifiable(): @UnmodifiableView ${rawType}<K> = ${rawType}s.unmodifiable(this)")
                 }
 
                 right.isGeneric -> {
                     appendLine("inline fun <V> ${rawType}<V>.synchronized(): ${rawType}<V> = ${rawType}s.synchronize(this)")
                     appendLine("inline fun <V> ${rawType}<V>.synchronized(lock: Any): ${rawType}<V> = ${rawType}s.synchronize(this, lock)")
-                    appendLine("inline fun <V> ${rawType}<V>.unmodifiable(): ${rawType}<V> = ${rawType}s.unmodifiable(this)")
+                    appendLine("inline fun <V> ${rawType}<V>.unmodifiable(): @UnmodifiableView ${rawType}<V> = ${rawType}s.unmodifiable(this)")
                 }
 
                 else -> {
                     appendLine("inline fun ${rawType}.synchronized(): $rawType = ${rawType}s.synchronize(this)")
                     appendLine("inline fun ${rawType}.synchronized(lock: Any): $rawType = ${rawType}s.synchronize(this, lock)")
-                    appendLine("inline fun ${rawType}.unmodifiable(): $rawType = ${rawType}s.unmodifiable(this)")
+                    appendLine("inline fun ${rawType}.unmodifiable(): @UnmodifiableView $rawType = ${rawType}s.unmodifiable(this)")
                 }
             }
         }
@@ -197,6 +198,8 @@ val immutableListSetFactoryTask = tasks.register<GenerateSrcTask>("immutable-lis
     group = TASK_GROUP
 
     packageName.set(PACKAGE)
+    imports.add("org.jetbrains.annotations.Unmodifiable")
+    imports.add("org.jetbrains.annotations.UnmodifiableView")
     imports.addAll(IMPORT_ALL)
 
     content {
@@ -209,32 +212,32 @@ val immutableListSetFactoryTask = tasks.register<GenerateSrcTask>("immutable-lis
                 appendLine("inline fun <T> ${type}List<T>?.orEmpty(): ${type}List<T> = this ?: $emptyList")
                 appendLine("inline fun <T> ${type}Set<T>?.orEmpty(): ${type}Set<T> = this ?: $emptySet")
 
-                appendLine("inline fun <T> ${type.lowercaseName}ListOf(): ${type}List<T> = $emptyList")
-                appendLine("inline fun <T> ${type.lowercaseName}SetOf(): ${type}Set<T> = $emptySet")
+                appendLine("inline fun <T> ${type.lowercaseName}ListOf(): @Unmodifiable ${type}List<T> = $emptyList")
+                appendLine("inline fun <T> ${type.lowercaseName}SetOf(): @Unmodifiable ${type}Set<T> = $emptySet")
 
-                appendLine("inline fun <T> ${type.lowercaseName}ListOf(element: T): ${type}List<T> = ${singletonList()}")
-                appendLine("inline fun <T> ${type.lowercaseName}SetOf(element: T): ${type}Set<T> = ${singletonSet()}")
+                appendLine("inline fun <T> ${type.lowercaseName}ListOf(element: T): @Unmodifiable ${type}List<T> = ${singletonList()}")
+                appendLine("inline fun <T> ${type.lowercaseName}SetOf(element: T): @Unmodifiable ${type}Set<T> = ${singletonSet()}")
 
-                appendLine("inline fun <T> ${type.lowercaseName}ListOf(vararg elements: T): ${type}List<T> =")
+                appendLine("inline fun <T> ${type.lowercaseName}ListOf(vararg elements: T): @Unmodifiable ${type}List<T> =")
                 appendLine("when(elements.size) { 0 -> $emptyList 1 -> ${singletonList("elements[0]")} else -> ${type}ImmutableList(elements) }")
 
-                appendLine("inline fun <T> Array<out T>.as${type}List(): ${type}List<T> = ${type}ImmutableList(this)")
-                appendLine("inline fun <T> Array<out T>.as${type}List(offset: Int = 0, length: Int = this.size): ${type}List<T> = ${type}ImmutableList(this, offset, length)")
+                appendLine("inline fun <T> Array<out T>.as${type}List(): @UnmodifiableView ${type}List<T> = ${type}ImmutableList(this)")
+                appendLine("inline fun <T> Array<out T>.as${type}List(offset: Int = 0, length: Int = this.size): @UnmodifiableView ${type}List<T> = ${type}ImmutableList(this, offset, length)")
             } else {
                 appendLine("inline fun ${type}List?.orEmpty(): ${type}List = this ?: $emptyList")
                 appendLine("inline fun ${type}Set?.orEmpty(): ${type}Set = this ?: $emptySet")
 
-                appendLine("inline fun ${type.lowercaseName}ListOf(): ${type}List = $emptyList")
-                appendLine("inline fun ${type.lowercaseName}SetOf(): ${type}Set = $emptySet")
+                appendLine("inline fun ${type.lowercaseName}ListOf(): @Unmodifiable ${type}List = $emptyList")
+                appendLine("inline fun ${type.lowercaseName}SetOf(): @Unmodifiable ${type}Set = $emptySet")
 
-                appendLine("inline fun ${type.lowercaseName}ListOf(element: ${type}): ${type}List = ${singletonList()}")
-                appendLine("inline fun ${type.lowercaseName}SetOf(element: ${type}): ${type}Set = ${singletonSet()}")
+                appendLine("inline fun ${type.lowercaseName}ListOf(element: ${type}): @Unmodifiable ${type}List = ${singletonList()}")
+                appendLine("inline fun ${type.lowercaseName}SetOf(element: ${type}): @Unmodifiable ${type}Set = ${singletonSet()}")
 
-                appendLine("inline fun ${type.lowercaseName}ListOf(vararg elements: ${type}): ${type}List =")
+                appendLine("inline fun ${type.lowercaseName}ListOf(vararg elements: ${type}): @Unmodifiable ${type}List =")
                 appendLine("when(elements.size) { 0 -> $emptyList 1 -> ${singletonList("elements[0]")} else -> ${type}ImmutableList(elements) }")
 
-                appendLine("inline fun ${type}Array.as${type}List(): ${type}List = ${type}ImmutableList(this)")
-                appendLine("inline fun ${type}Array.as${type}List(offset: Int = 0, length: Int = this.size): ${type}List = ${type}ImmutableList(this, offset, length)")
+                appendLine("inline fun ${type}Array.as${type}List(): @UnmodifiableView ${type}List = ${type}ImmutableList(this)")
+                appendLine("inline fun ${type}Array.as${type}List(offset: Int = 0, length: Int = this.size): @UnmodifiableView ${type}List = ${type}ImmutableList(this, offset, length)")
             }
             appendLine()
         }
@@ -389,6 +392,7 @@ val emptyAndSingletonMapFactoryTask = tasks.register<GenerateSrcTask>("empty-and
     group = TASK_GROUP
 
     packageName.set(PACKAGE)
+    imports.add("org.jetbrains.annotations.Unmodifiable")
     imports.addAll(IMPORT_ALL)
 
     content {
@@ -412,7 +416,7 @@ val emptyAndSingletonMapFactoryTask = tasks.register<GenerateSrcTask>("empty-and
                 append(genericType)
                 space()
             }
-            append("$functionName(): $mapTypeNameWithGeneric = ${mapTypeName}s.")
+            append("$functionName(): @Unmodifiable $mapTypeNameWithGeneric = ${mapTypeName}s.")
             if (genericType != null) {
                 appendLine("emptyMap()")
             } else {
@@ -424,7 +428,7 @@ val emptyAndSingletonMapFactoryTask = tasks.register<GenerateSrcTask>("empty-and
                 append(genericType)
                 space()
             }
-            appendLine("$functionName(k: $keyType, v: $valueType): $mapTypeNameWithGeneric = ${mapTypeName}s.singleton(k, v)")
+            appendLine("$functionName(k: $keyType, v: $valueType): @Unmodifiable $mapTypeNameWithGeneric = ${mapTypeName}s.singleton(k, v)")
         }
     }
 }

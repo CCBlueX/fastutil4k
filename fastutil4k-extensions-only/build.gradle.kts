@@ -7,6 +7,7 @@ plugins {
 dependencies {
     compileOnly(kotlin("stdlib"))
     compileOnly(libs.fastutil)
+    compileOnly(libs.annotations)
 }
 
 kotlin {

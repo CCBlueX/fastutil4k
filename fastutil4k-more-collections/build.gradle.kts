@@ -1,6 +1,7 @@
 dependencies {
     compileOnly(libs.fastutil)
     compileOnly(project(":fastutil4k-extensions-only"))
+    compileOnly(libs.annotations)
 
     testCompileOnly(project(":fastutil4k-extensions-only"))
     testImplementation(kotlin("test"))

@@ -6,6 +6,7 @@ dokka = "2.1.0"
 
 [libraries]
 fastutil = { module = "it.unimi.dsi:fastutil", version.ref = "fastutil" }
+annotations = { module = "org.jetbrains:annotations", version = "26.1.0" }
 
 [plugins]
 kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

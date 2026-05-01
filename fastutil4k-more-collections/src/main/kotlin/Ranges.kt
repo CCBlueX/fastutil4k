@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.doubles.DoubleLists
 import it.unimi.dsi.fastutil.floats.AbstractFloatList
 import it.unimi.dsi.fastutil.floats.FloatList
 import it.unimi.dsi.fastutil.floats.FloatLists
+import org.jetbrains.annotations.Unmodifiable
 import kotlin.math.floor
 
 private const val EPSILON_D = 1e-10
@@ -44,7 +45,7 @@ private const val EPSILON_F = 1e-6f
  * @throws IllegalArgumentException if `step` is not positive or the range contains
  *   non-finite values.
  */
-infix fun ClosedRange<Double>.step(step: Double): DoubleList {
+infix fun ClosedRange<Double>.step(step: Double): @Unmodifiable DoubleList {
     require(start.isFinite())
     require(endInclusive.isFinite())
     require(step > 0.0)
@@ -97,7 +98,7 @@ infix fun ClosedRange<Double>.step(step: Double): DoubleList {
  * @throws IllegalArgumentException if `step` is not positive or the range contains
  *   non-finite values.
  */
-infix fun ClosedRange<Float>.step(step: Float): FloatList {
+infix fun ClosedRange<Float>.step(step: Float): @Unmodifiable FloatList {
     require(start.isFinite())
     require(endInclusive.isFinite())
     require(step > 0.0f)
