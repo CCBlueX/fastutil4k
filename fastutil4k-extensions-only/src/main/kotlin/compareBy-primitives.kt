@@ -1,4 +1,5 @@
 @file:Suppress("unused", "NOTHING_TO_INLINE")
+
 package net.ccbluex.fastutil
 
 import java.util.function.ToDoubleFunction
