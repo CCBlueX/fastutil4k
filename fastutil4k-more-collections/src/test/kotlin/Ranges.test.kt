@@ -36,9 +36,31 @@ class RangesTest {
     }
 
     @Test
+    fun testDoubleStepIncludesExactEndpoint() {
+        val list = (0.0..0.3).step(0.1)
+        val expected = doubleListOf(0.0, 0.1, 0.2, 0.3)
+
+        assertEquals(expected.size, list.size)
+        for (i in 0..<expected.size) {
+            assertEquals(expected.getDouble(i), list.getDouble(i), 1.0e-12)
+        }
+    }
+
+    @Test
     fun testFloatStepWithEpsilon() {
         val list = (0f..1f).step(0.3f)
         val expected = floatListOf(0f, 0.3f, 0.6f, 0.9f)
+        assertEquals(expected.size, list.size)
+        for (i in 0..<expected.size) {
+            assertEquals(expected.getFloat(i), list.getFloat(i), 1.0e-6f)
+        }
+    }
+
+    @Test
+    fun testFloatStepIncludesExactEndpoint() {
+        val list = (0f..0.3f).step(0.1f)
+        val expected = floatListOf(0f, 0.1f, 0.2f, 0.3f)
+
         assertEquals(expected.size, list.size)
         for (i in 0..<expected.size) {
             assertEquals(expected.getFloat(i), list.getFloat(i), 1.0e-6f)
@@ -70,6 +92,12 @@ class RangesTest {
 
         assertFailsWith<IllegalArgumentException> { (Float.NaN..1f).step(0.1f) }
         assertFailsWith<IllegalArgumentException> { (0f..Float.POSITIVE_INFINITY).step(0.1f) }
+    }
+
+    @Test
+    fun testTooLargeRangeRejected() {
+        assertFailsWith<IllegalArgumentException> { (0.0..Int.MAX_VALUE.toDouble()).step(1e-9) }
+        assertFailsWith<IllegalArgumentException> { (0f..Int.MAX_VALUE.toFloat()).step(1e-3f) }
     }
 
     @Test
