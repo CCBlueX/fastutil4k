@@ -223,6 +223,8 @@ val immutableListSetFactoryTask = tasks.register<GenerateSrcTask>("immutable-lis
 
                 appendLine("inline fun <T> Array<out T>.as${type}List(): @UnmodifiableView ${type}List<T> = ${type}ImmutableList(this)")
                 appendLine("inline fun <T> Array<out T>.as${type}List(offset: Int = 0, length: Int = this.size): @UnmodifiableView ${type}List<T> = ${type}ImmutableList(this, offset, length)")
+                appendLine("@Suppress(\"UNCHECKED_CAST\")")
+                appendLine("inline fun <T> Array<out T>.wrap${type}ArrayList(length: Int = this.size): ${type}ArrayList<T> = ${type}ArrayList.wrap(this as Array<T>, length)")
             } else {
                 appendLine("inline fun ${type}List?.orEmpty(): ${type}List = this ?: $emptyList")
                 appendLine("inline fun ${type}Set?.orEmpty(): ${type}Set = this ?: $emptySet")
@@ -238,6 +240,7 @@ val immutableListSetFactoryTask = tasks.register<GenerateSrcTask>("immutable-lis
 
                 appendLine("inline fun ${type}Array.as${type}List(): @UnmodifiableView ${type}List = ${type}ImmutableList(this)")
                 appendLine("inline fun ${type}Array.as${type}List(offset: Int = 0, length: Int = this.size): @UnmodifiableView ${type}List = ${type}ImmutableList(this, offset, length)")
+                appendLine("inline fun ${type}Array.wrap${type}ArrayList(length: Int = this.size): ${type}ArrayList = ${type}ArrayList.wrap(this, length)")
             }
             appendLine()
         }
