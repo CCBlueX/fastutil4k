@@ -9,7 +9,7 @@
 | Module | Purpose | Published |
 |---|---|---|
 | `fastutil4k-extensions-only` | Generated + hand-written inline Kotlin extension APIs for fastutil and JDK collections | Yes (`net.ccbluex:fastutil4k-extensions-only`) |
-| `fastutil4k-more-collections` | Higher-level data structures built with fastutil internals (Pool, LfuCache, WeightedSortedList) | Yes (`net.ccbluex:fastutil4k-more-collections`) |
+| `fastutil4k-more-collections` | Higher-level data structures built with fastutil internals (Pool, LfuCache, EnumLinkedSet, WeightedSortedList) | Yes (`net.ccbluex:fastutil4k-more-collections`) |
 | `benchmark` | JMH benchmarks for local performance measurement | No |
 | `buildSrc` | Custom Gradle tasks for code generation | No |
 
@@ -132,7 +132,7 @@ GitHub Actions workflows in `.github/workflows/`:
 - Mix of generated sources (under `build/generated/fastutil-kt/`) and hand-written files in `src/main/kotlin/`
 
 ### `fastutil4k-more-collections`
-- Contains concrete data structures: `Pool`, `LfuCache`, `WeightedSortedList`, `Ranges`
+- Contains concrete data structures: `Pool`, `LfuCache`, `EnumLinkedSet`, `WeightedSortedList`, `Ranges`
 - Also has weighted terminal operations for `Iterable` / `Sequence`
 - Has a `weighted-terminal` code generation task
 
