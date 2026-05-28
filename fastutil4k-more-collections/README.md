@@ -27,6 +27,19 @@ Map-like LFU cache:
 - uses LRU tie-breaking among same-frequency keys
 - optional discard callback (`onDiscard`)
 
+### `EnumLinkedSet<E>`
+
+Insertion-ordered set for enum types:
+
+- backed by a bit-vector for O(1) membership tests and a packed doubly-linked list for insertion order
+- supports up to 65536 enum constants
+- `addFirst` / `addLast` / `addAndMoveToFirst` / `addAndMoveToLast` for position manipulation
+- `removeFirst` / `removeLast` for deque-style removal
+- `indexOf(element)` for positional lookup in O(n)
+- bidirectional `ObjectListIterator` with `nextIndex` / `previousIndex`
+- extends `AbstractReferenceSortedSet` for fastutil compatibility
+- null elements are not supported
+
 ### `WeightedSortedList<E>`
 
 List-like container sorted by weight:
