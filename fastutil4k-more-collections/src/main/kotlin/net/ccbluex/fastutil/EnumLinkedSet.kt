@@ -472,5 +472,50 @@ class EnumLinkedSet<E : Enum<E>> private constructor(
          * @return a new empty [EnumLinkedSet]
          */
         inline operator fun <reified E : Enum<E>> invoke(): EnumLinkedSet<E> = EnumLinkedSet(E::class.java)
+
+        @JvmStatic
+        @JvmName("of")
+        operator fun <E : Enum<E>> invoke(e0: E): EnumLinkedSet<E> = EnumLinkedSet(e0.javaClass).apply { add(e0) }
+
+        @JvmStatic
+        @JvmName("of")
+        operator fun <E : Enum<E>> invoke(e0: E, e1: E): EnumLinkedSet<E> = EnumLinkedSet(e0.javaClass).apply {
+            add(e0)
+            add(e1)
+        }
+
+        @JvmStatic
+        @JvmName("of")
+        operator fun <E : Enum<E>> invoke(e0: E, e1: E, e2: E): EnumLinkedSet<E> = EnumLinkedSet(e0.javaClass).apply {
+            add(e0)
+            add(e1)
+            add(e2)
+        }
+
+        @JvmStatic
+        @JvmName("of")
+        operator fun <E : Enum<E>> invoke(e0: E, e1: E, e2: E, e3: E): EnumLinkedSet<E> = EnumLinkedSet(e0.javaClass).apply {
+            add(e0)
+            add(e1)
+            add(e2)
+            add(e3)
+        }
+
+        @JvmStatic
+        @JvmName("of")
+        operator fun <E : Enum<E>> invoke(e0: E, e1: E, e2: E, e3: E, e4: E): EnumLinkedSet<E> = EnumLinkedSet(e0.javaClass).apply {
+            add(e0)
+            add(e1)
+            add(e2)
+            add(e3)
+            add(e4)
+        }
+
+        @JvmStatic
+        @JvmName("of")
+        operator fun <E : Enum<E>> invoke(e0: E, vararg e1: E): EnumLinkedSet<E> = EnumLinkedSet(e0.javaClass).apply {
+            add(e0)
+            for (e in e1) add(e)
+        }
     }
 }
