@@ -70,6 +70,9 @@ subprojects {
 
     kotlin {
         jvmToolchain(8)
+        compilerOptions {
+            freeCompilerArgs.add("-Xmetadata-version=2.0.0")
+        }
     }
 
     if (!isBenchmarkModule) {

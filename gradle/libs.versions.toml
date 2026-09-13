@@ -1,7 +1,7 @@
 [versions]
 fastutil = "8.5.15"
 
-kotlin = "2.0.0"
+kotlin = "2.4.20"
 dokka = "2.1.0"
 
 [libraries]
