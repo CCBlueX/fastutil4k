@@ -171,3 +171,11 @@ kotlin {
 tasks.named("compileKotlin") {
     dependsOn(generateWeightedTerminalTask)
 }
+
+tasks.named("dokkaGenerateModuleHtml") {
+    dependsOn(generateWeightedTerminalTask)
+}
+
+tasks.named("dokkaGeneratePublicationHtml") {
+    dependsOn(generateWeightedTerminalTask)
+}
