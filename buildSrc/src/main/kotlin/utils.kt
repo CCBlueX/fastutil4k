@@ -44,7 +44,14 @@ inline fun StringAppendable.appendMultiline(@Language("kotlin") line: String) {
     appendLine()
 }
 
-inline fun StringAppendable.withIndent(n: Int = 1, action: StringAppendable.() -> Unit) = StringAppendable {
-    space(n * INDENT_SIZE)
-    append(it)
-}.apply(action)
+inline fun StringAppendable.withIndent(n: Int = 1, action: StringAppendable.() -> Unit) {
+    var atLineStart = true
+    StringAppendable { s ->
+        if (atLineStart && s.isNotEmpty() && s != "\n") {
+            space(n * INDENT_SIZE)
+            atLineStart = false
+        }
+        append(s)
+        if (s.endsWith('\n')) atLineStart = true
+    }.apply(action)
+}
