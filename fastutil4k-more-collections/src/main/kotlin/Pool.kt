@@ -25,7 +25,7 @@ sealed interface Pool<E : Any> {
      * @throws IllegalArgumentException if count is negative
      */
     fun borrowInto(
-        destination: MutableCollection<E>,
+        destination: MutableCollection<in E>,
         count: Int,
     )
 
@@ -55,7 +55,7 @@ sealed interface Pool<E : Any> {
      * @param destination The collection to receive objects.
      * @return The count of cleared objects
      */
-    fun clearInto(destination: MutableCollection<E>): Int
+    fun clearInto(destination: MutableCollection<in E>): Int
 
     /**
      * Returns a thread-safe synchronized version of this pool.
@@ -72,7 +72,7 @@ sealed interface Pool<E : Any> {
          */
         @JvmStatic
         @JvmName("create")
-        operator fun <E : Any> invoke(initializer: Supplier<E>): Pool<E> = invoke(initializer) {}
+        operator fun <E : Any> invoke(initializer: Supplier<out E>): Pool<E> = invoke(initializer) {}
 
         /**
          * Creates a new object pool.
@@ -84,7 +84,7 @@ sealed interface Pool<E : Any> {
         @JvmStatic
         @JvmName("create")
         operator fun <E : Any> invoke(
-            initializer: Supplier<E>,
+            initializer: Supplier<out E>,
             finalizer: Consumer<in E>,
         ): Pool<E> = ListBasedPool(initializer, finalizer)
 
@@ -115,7 +115,7 @@ sealed interface Pool<E : Any> {
 
         @Synchronized
         override fun borrowInto(
-            destination: MutableCollection<E>,
+            destination: MutableCollection<in E>,
             count: Int,
         ) = delegate.borrowInto(destination, count)
 
@@ -129,7 +129,7 @@ sealed interface Pool<E : Any> {
         override fun clear() = delegate.clear()
 
         @Synchronized
-        override fun clearInto(destination: MutableCollection<E>) = delegate.clearInto(destination)
+        override fun clearInto(destination: MutableCollection<in E>) = delegate.clearInto(destination)
 
         override fun synchronized(): Pool<E> = this
     }
@@ -138,7 +138,7 @@ sealed interface Pool<E : Any> {
      * Default Pool implementation backed by a list (stack) structure.
      */
     private class ListBasedPool<E : Any>(
-        private val initializer: Supplier<E>,
+        private val initializer: Supplier<out E>,
         private val finalizer: Consumer<in E>,
     ) : Pool<E> {
         // Internal storage for pooled objects
@@ -149,7 +149,7 @@ sealed interface Pool<E : Any> {
         override fun borrow(): E = if (stack.isEmpty) initializer.get() else stack.pop()
 
         override fun borrowInto(
-            destination: MutableCollection<E>,
+            destination: MutableCollection<in E>,
             count: Int,
         ) {
             fun getBuffer() = this.batchBorrowBuffer ?: ReferenceArrayList<E>().also {
@@ -203,7 +203,7 @@ sealed interface Pool<E : Any> {
             return n
         }
 
-        override fun clearInto(destination: MutableCollection<E>): Int {
+        override fun clearInto(destination: MutableCollection<in E>): Int {
             destination.addAll(stack)
             val n = stack.size
             stack.clear()
