@@ -361,6 +361,7 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
                 }
 
                 else -> {
+                    appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(): ${type}${fullType}<T> = ${type}${fullType}()")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(element: T): ${type}${fullType}<T> = ${type}${fullType}.of(element)")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
                 }
@@ -371,14 +372,21 @@ val mutableSetFactoryTask = tasks.register<GenerateSrcTask>("mutable-set-factory
         for ((prefix, fullType) in prefixToFullType) {
             val setType = "${prefix}Set"
             when (prefix) {
-                "Array" -> appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
+                "Array" -> {
+                    appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(): ${type}${fullType}<T> = ${type}${fullType}()")
+                    appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
+                }
+
                 "RBTree", "AVLTree" -> {}
+
                 "Hash" -> {
+                    appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(): ${type}${fullType}<T> = ${type}${fullType}()")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(element: T): ${type}${fullType}<T> = ${type}${fullType}.of(element)")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
                 }
 
                 else -> {
+                    appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(): ${type}${fullType}<T> = ${type}${fullType}()")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(element: T): ${type}${fullType}<T> = ${type}${fullType}.of(element)")
                     appendLine("inline fun <T> ${type.lowercaseName}${setType}Of(vararg elements: T): ${type}${fullType}<T> = ${type}${fullType}(elements)")
                 }
