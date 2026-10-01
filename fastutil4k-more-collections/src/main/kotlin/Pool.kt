@@ -61,7 +61,10 @@ sealed interface Pool<E : Any> {
      * Returns a thread-safe synchronized version of this pool.
      * @return Synchronized Pool instance
      */
-    fun synchronized(): Pool<E> = Sync(this)
+    fun sync(): Pool<E>
+
+    @Deprecated("Use `sync` instead.", ReplaceWith("sync()"), level = DeprecationLevel.ERROR)
+    fun synchronized(): Pool<E> = sync()
 
     companion object {
         /**
@@ -131,7 +134,7 @@ sealed interface Pool<E : Any> {
         @Synchronized
         override fun clearInto(destination: MutableCollection<in E>) = delegate.clearInto(destination)
 
-        override fun synchronized(): Pool<E> = this
+        override fun sync(): Pool<E> = this
     }
 
     /**
@@ -209,5 +212,7 @@ sealed interface Pool<E : Any> {
             stack.clear()
             return n
         }
+
+        override fun sync(): Pool<E> = Sync(this)
     }
 }
