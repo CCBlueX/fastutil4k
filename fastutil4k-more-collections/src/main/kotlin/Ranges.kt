@@ -64,7 +64,7 @@ infix fun ClosedRange<Double>.step(step: Double): @Unmodifiable DoubleList {
     require(endInclusive.isFinite())
     require(step > 0.0)
 
-    if (isEmpty()) return DoubleLists.emptyList()
+    if (isEmpty()) return DoubleLists.EMPTY_LIST
 
     return object : AbstractDoubleList(), RandomAccess {
         override val size: Int = computeSteppedSize(endInclusive - start, step, EPSILON_D)
@@ -112,7 +112,7 @@ infix fun ClosedRange<Float>.step(step: Float): @Unmodifiable FloatList {
     require(endInclusive.isFinite())
     require(step > 0.0f)
 
-    if (isEmpty()) return FloatLists.emptyList()
+    if (isEmpty()) return FloatLists.EMPTY_LIST
 
     return object : AbstractFloatList(), RandomAccess {
         override val size: Int = computeSteppedSize(endInclusive - start, step, EPSILON_F)

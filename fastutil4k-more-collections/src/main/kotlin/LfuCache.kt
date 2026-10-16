@@ -18,7 +18,7 @@ import java.util.function.IntFunction
 class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
     @get:JvmName("capacity")
     val capacity: Int,
-    val onDiscard: BiConsumer<in K, in V> = NOOP,
+    val onDiscard: BiConsumer<in K, in V> = Nop,
 ) : Map<K, V> {
     init {
         require(capacity > 0) { "capacity should be positive" }
@@ -153,7 +153,7 @@ class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
      * Clears the cache and call [onDiscard] for all cached entries.
      */
     fun clear() {
-        if (onDiscard !== NOOP) {
+        if (onDiscard !== Nop) {
             cache.fastIterator().forEach { (k, v) -> onDiscard.accept(k, v) }
         }
         cache.clear()
@@ -181,9 +181,4 @@ class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
 
     override val values: ObjectCollection<V>
         get() = _values ?: cache.values.unmodifiable().also { _values = it }
-
-    internal companion object {
-        @JvmStatic
-        private val NOOP = BiConsumer<Any?, Any?> { _, _ -> }
-    }
 }
