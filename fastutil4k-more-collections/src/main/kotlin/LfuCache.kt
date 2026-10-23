@@ -13,7 +13,7 @@ import java.util.function.BiConsumer
 import java.util.function.IntFunction
 
 /**
- * A simple least frequency used cache. Non-thread-safe.
+ * A simple least frequently used cache. Non-thread-safe.
  */
 class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
     @get:JvmName("capacity")
@@ -150,7 +150,7 @@ class LfuCache<K : Any, V : Any> @JvmOverloads constructor(
     inline fun getOrPut(key: K, mappingFunction: (K) -> V): V = get(key) ?: mappingFunction(key).also { put(key, it) }
 
     /**
-     * Clears the cache and call [onDiscard] for all cached entries.
+     * Clears the cache and calls [onDiscard] for all cached entries.
      */
     fun clear() {
         if (onDiscard !== Nop) {
