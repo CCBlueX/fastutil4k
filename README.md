@@ -34,6 +34,7 @@ Provides higher-level collection utilities and data structures, including:
 
 - `Pool<E>`: reusable object pool with optional finalizer and synchronized wrapper
 - `LfuCache<K, V>`: non-thread-safe LFU cache with LRU tie-breaking
+- `EnumLinkedSet<E>`: insertion-ordered set for enum types backed by a bit-vector and packed doubly-linked list
 - `WeightedSortedList<E>`: bounds-checked list sorted by element weight
 - weighted terminal operations for `Iterable` / `Sequence`:
   `weightedFilterSortedBy*`, `weightedMinByOrNull*`, `weightedMaxByOrNull*`
