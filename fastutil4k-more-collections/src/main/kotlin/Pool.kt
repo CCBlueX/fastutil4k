@@ -81,7 +81,7 @@ sealed interface Pool<E : Any> {
          * Creates a new object pool.
          *
          * @param initializer Supplier to create new objects when pool is empty
-         * @param finalizer Consumer to reset objects before reuse, should be idempotence, no side effect, and not throwing any exception.
+         * @param finalizer Consumer to reset objects before reuse, should be idempotent, no side effect, and not throwing any exception.
          * @return New Pool instance
          */
         @JvmStatic
